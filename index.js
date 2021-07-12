@@ -137,6 +137,8 @@ const addEmployee = () =>{
 const viewDepartments = () =>{
   connection.query( 'SELECT * FROM department', (err, res) => {
       if (err) throw err;
+      console.log("Id| Department ")
+      console.log("----------------")
       res.forEach(({id, name}) =>{
         console.log(`${id} | ${name}`);
       });
@@ -149,9 +151,12 @@ const viewDepartments = () =>{
 const viewRoles = () =>{
   connection.query( 'SELECT * FROM role', (err, res) => {
       if (err) throw err;
+      console.log("Id| Title | Salary | Department-ID ")
+      console.log("-------------------------------------")
       res.forEach(({id, title, salary, department_id}) =>{
         console.log(`${id} | ${title} | ${salary} | ${department_id}`);
       });
+      console.log("__________________________________________")
       start();
   });
 };
@@ -160,12 +165,47 @@ const viewRoles = () =>{
 const viewEmployees = () =>{
   connection.query( 'SELECT * FROM employee', (err, res) => {
       if (err) throw err;
+      console.log("Id| First | Last | Role-Id | Manager-Id ")
+      console.log("------------------------------------------")
       res.forEach(({id, first_name, last_name, role_id, manager_id}) =>{
         console.log(`${id} | ${first_name} | ${last_name} | ${role_id} | ${manager_id}`);
       });
+      console.log("__________________________________________")
       start();
   });
 };
+ //uodates employee roles...
+ const updateEmployeeRole = () =>{
+   inquirer.prompt([
+     {
+       name : "employee",
+       type : "input",
+       message : "What is the id of the employee whose role you wish to update:"
+     },
+     {
+       name : "new_role",
+       type : "input",
+       message : "enter the new role id you whish to assign"
+     }
+   ]).then((data) => {
+     console.log(`updating employee ${data.employee}'s role...'`)
+     connection.query(
+       'UPDATE employee SET? WHERE ?',
+       [
+         {
+           role_id : `${data.new_role}`,
+         },
+         {
+           id : `${data.employee}`,
+         },
+       ], (err, res) =>{
+         if (err) throw err;
+         console.log(`${res.affectedRows} employee role updated!\n`);
+         start();
+       }
+     );
+   });
+ }
 
 //starts connection w/ database
 connection.connect((err) => {
